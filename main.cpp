@@ -63,12 +63,15 @@ struct T
     std::string name; //3
 };
 
-struct compareValues                              //4
+struct CompareValues                              //4
 {
     T* compare(T* a, T* b) //5
     {
-        if( a->value < b->value ) return a;
-        if( a->value > b->value ) return b;
+        if (a != nullptr && b !=nullptr)
+        {
+            if (a->value < b->value) return a;
+            if (a->value > b->value) return b;
+        }
         return nullptr;
     }
 };
@@ -141,7 +144,7 @@ int main()
     T t1(45, "c");                                             //6
     T t2(25, "m");                                             //6
     
-    compareValues f;                                            //7
+    CompareValues f;                                            //7
     auto* smaller = f.compare(&t1, &t2); //8
     if (smaller != nullptr)
     {
@@ -149,7 +152,7 @@ int main()
     }
     else
     {
-        std::cout << "One of the following errors happened: 1) One or both instances contain null pointers or 2) Both instances are equal" << std::endl;
+        std::cout << "One of the following errors happened: 1) One or both instances contain null pointers or 2) Both instances' member variables are equal." << std::endl;
     }
     
     U u1;
