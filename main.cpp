@@ -36,13 +36,10 @@ struct T
 
 struct CompareValues                              //4
 {
-    T* compare(T* a, T* b) //5
+    T* compare(T& a, T& b) //5
     {
-        if (a != nullptr && b !=nullptr)
-        {
-            if (a->value < b->value) return a;
-            if (a->value > b->value) return b;
-        }
+        if (a.value < b.value) return &a;
+        if (a.value > b.value) return &b;
         return nullptr;
     }
 };
@@ -50,49 +47,39 @@ struct CompareValues                              //4
 struct U
 {
     float name1 { 0 }, name2 { 0 };
-    float memberFunctionU(float* updatedValue)      //12
+    float memberFunctionU(const float& updatedValue)      //12
     {
-        if(updatedValue != nullptr)
+        std::cout << "U's name1 value: " << this->name1 << std::endl;
+        this->name1 = updatedValue;
+        std::cout << "U's name1 updated value: " << this->name1 << std::endl;
+        while( std::abs(this->name2 - this->name1) > 0.001f ) 
         {
-            std::cout << "U's name1 value: " << this->name1 << std::endl;
-            this->name1 = *updatedValue;
-            std::cout << "U's name1 updated value: " << this->name1 << std::endl;
-            while( std::abs(this->name2 - this->name1) > 0.001f ) 
-            {
             /*
-             write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
-             */
-                this->name2 += .2f;
-            }
-            std::cout << "U's name2 updated value: " << this->name2 << std::endl;
-            return this->name2 * this->name1;
+            write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
+            */
+            this->name2 += .2f;
         }
-        std::cout <<"Function contains null pointers!" << std::endl;
-        return 0;
+        std::cout << "U's name2 updated value: " << this->name2 << std::endl;
+        return this->name2 * this->name1;
     }
 };
 
 struct S
 {
-    static float staticFunctionS(U* that, float* updatedValue )//10
-    {
-        if (that != nullptr && updatedValue != nullptr)
+    static float staticFunctionS(U& that, const float& updatedValue )//10
+    {   
+        std::cout << "U's name1 value: " << that.name1 << std::endl;
+        that.name1 = updatedValue;
+        std::cout << "U's name1 updated value: " << that.name1 << std::endl;
+        while( std::abs(that.name2 - that.name1) > 0.001f )
         {
-            std::cout << "U's name1 value: " << that->name1 << std::endl;
-            that->name1 = *updatedValue;
-            std::cout << "U's name1 updated value: " << that->name1 << std::endl;
-            while( std::abs(that->name2 - that->name1) > 0.001f )
-            {
             /*
-             write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
-             */
-                that->name2 += .2f;
-            }
-            std::cout << "U's name2 updated value: " << that->name2 << std::endl;
-            return that->name2 * that->name1;
+            write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
+            */
+            that.name2 += .2f;
         }
-        std::cout <<"Function contains null pointers!" << std::endl;
-        return 0;
+        std::cout << "U's name2 updated value: " << that.name2 << std::endl;
+        return that.name2 * that.name1;       
     }
 }; 
     
@@ -116,20 +103,20 @@ int main()
     T t2(25, "m");                                             //6
     
     CompareValues f;                                            //7
-    auto* smaller = f.compare(&t1, &t2); //8
+    auto* smaller = f.compare(t1, t2); //8
     if (smaller != nullptr)
     {
          std::cout << "the smaller one is << " << smaller->name << std::endl; //9       
     }
     else
     {
-        std::cout << "One of the following errors happened: 1) One or both instances contain null pointers or 2) Both instances' member variables are equal." << std::endl;
+        std::cout << "Error - Both instances' member variables are equal." << std::endl;
     }
     
     U u1;
     float updatedValue = 5.f;
-    std::cout << "[static func] u1's multiplied values: " << S::staticFunctionS(&u1, &updatedValue) << std::endl;                  //11
+    std::cout << "[static func] u1's multiplied values: " << S::staticFunctionS(u1, updatedValue) << std::endl;                  //11
     
     U u2;
-    std::cout << "[member func] u2's multiplied values: " << u2.memberFunctionU( &updatedValue ) << std::endl;
+    std::cout << "[member func] u2's multiplied values: " << u2.memberFunctionU(updatedValue) << std::endl;
 }
